@@ -11,17 +11,18 @@ It allows Rust applications which use the [OpenTelemetry](https://opentelemetry.
 To integrate the OpenTelemetry APIs with the Azure SDK for Rust, you create a `OpenTelemetryTracerProvider` and pass it into your SDK ClientOptions.
 
 ```rust no_run
-# use azure_identity::DeveloperToolsCredential;
-# use azure_core::{http::{ClientOptions, InstrumentationOptions}};
-# #[derive(Default)]
-# struct ServiceClientOptions {
-#    client_options: ClientOptions,
-# }
+use azure_core::http::{ClientOptions, InstrumentationOptions};
 use azure_core_opentelemetry::OpenTelemetryTracerProvider;
 use opentelemetry_sdk::trace::SdkTracerProvider;
 use std::sync::Arc;
 
-# fn test_fn() -> azure_core::Result<()> {
+// `ServiceClientOptions` represents an Azure service client's options type.
+// Each Azure service client provides its own options containing `ClientOptions`.
+#[derive(Default)]
+struct ServiceClientOptions {
+    client_options: ClientOptions,
+}
+
 // Create an OpenTelemetry tracer provider adapter from an OpenTelemetry TracerProvider
 let otel_tracer_provider = Arc::new(SdkTracerProvider::builder().build());
 
@@ -36,26 +37,20 @@ let options = ServiceClientOptions {
     },
     ..Default::default()
 };
-
-#   Ok(())
-# }
 ```
 
 If it is more convenient to use the global OpenTelemetry provider, then the `OpenTelemetryTracerProvider::from_global_provider` method will configure the OpenTelemetry support to use the global provider instead of a custom configured provider.
 
 ```rust no_run
-# use azure_identity::DeveloperToolsCredential;
-# use azure_core::{http::{ClientOptions, InstrumentationOptions}};
-
-# #[derive(Default)]
-# struct ServiceClientOptions {
-#    client_options: ClientOptions,
-# }
+use azure_core::http::{ClientOptions, InstrumentationOptions};
 use azure_core_opentelemetry::OpenTelemetryTracerProvider;
-use opentelemetry_sdk::trace::SdkTracerProvider;
-use std::sync::Arc;
 
-# fn test_fn() -> azure_core::Result<()> {
+// `ServiceClientOptions` represents an Azure service client's options type.
+// Each Azure service client provides its own options containing `ClientOptions`.
+#[derive(Default)]
+struct ServiceClientOptions {
+    client_options: ClientOptions,
+}
 
 let azure_provider = OpenTelemetryTracerProvider::from_global_provider();
 
@@ -67,9 +62,6 @@ let options = ServiceClientOptions {
         ..Default::default()
     },
 };
-
-#   Ok(())
-# }
 ```
 
 Once the `OpenTelemetryTracerProvider` is integrated with the Azure Service ClientOptions, the Azure SDK will be configured to capture per-API and per-HTTP operation tracing options, and the HTTP requests will be annotated with [W3C Trace Context headers](https://www.w3.org/TR/trace-context/).
