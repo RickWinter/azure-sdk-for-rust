@@ -21,6 +21,9 @@ results.json
 # Dependencies.
 vcpkg_installed/
 
+# AI team infrastructure.
+.ai-team/
+
 # Editor user customizations.
 .vscode/launch.json
 .idea/
