@@ -38,6 +38,10 @@ Invoke-LoggedCommand "cargo check --package azure_core --all-features --all-targ
 
 Invoke-LoggedCommand "cargo fmt --all -- --check" -GroupOutput
 
+# Verify crate keywords do not exceed the crates.io limit of 5
+$verifyKeywordsScript = [System.IO.Path]::Combine($PSScriptRoot, 'Verify-Keywords.ps1')
+Invoke-LoggedCommand "& '$verifyKeywordsScript'" -GroupOutput
+
 Invoke-LoggedCommand "cargo clippy --workspace --all-features --all-targets --keep-going --no-deps" -GroupOutput
 
 if ($CheckWasm) {
